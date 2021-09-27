@@ -58,4 +58,4 @@ jobs:
     - name: Terraform Apply
       working-directory: ./infra
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: terraform apply -auto-approve -var='AWS_SECRET_KEY=${{ secrets.AWS_ACCESS_KEY_ID }}' -var='AWS_SECRET_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}' -var='Environment=dev'
+      run: terraform apply -auto-approve -var='AWS_SECRET_KEY=${{ secrets.AWS_ACCESS_KEY_ID }}' -var='AWS_SECRET_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}'
