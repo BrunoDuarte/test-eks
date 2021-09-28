@@ -49,20 +49,3 @@ jobs:
       working-directory: ./infra
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: terraform apply -auto-approve -var='AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY_ID }}' -var='AWS_SECRET_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}'
-
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        # aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }} # if you have/need it
-        aws-region: us-east-1
-
-    - name: Connect to EKS
-      run: aws eks --region us-east-1 update-kubeconfig --name trustd
-
-    - name: Add Helm repository
-      run: helm repo add bitnami https://charts.bitnami.com/bitnami
-
-    - name: Install wordpress
-      run: helm install trustd bitnami/wordpress
