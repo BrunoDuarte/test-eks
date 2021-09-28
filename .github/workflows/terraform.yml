@@ -35,6 +35,10 @@ jobs:
     - name: Verify Terraform version
       run: terraform --version
 
+    - name: Show tfstate
+      working-directory: ./infra
+      run: cat terraform.tfstate
+
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       working-directory: ./infra
