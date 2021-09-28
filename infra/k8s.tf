@@ -1,3 +1,11 @@
+terraform {
+  backend "s3" {
+    bucket = "trustd-buckets-remote-state"
+    dynamodb_table = "terraform-state-lock-dynamo-trustd"
+    key    = "terraform.tfstate"
+    region = "us-east-1"
+  }
+}
 resource "aws_vpc" "k8s_vpc" {
   cidr_block           = var.vpcCIDRblock
   instance_tenancy     = var.instanceTenancy 

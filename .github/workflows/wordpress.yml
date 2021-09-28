@@ -1,0 +1,47 @@
+name: 'Wordpress'
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+
+jobs:
+  wordpress:
+    name: 'Wordpress'
+    runs-on: ubuntu-latest
+    environment: production
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        # aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }} # if you have/need it
+        aws-region: us-east-1
+
+    - name: Connect to EKS
+      run: aws eks --region us-east-1 update-kubeconfig --name trustd
+
+    - name: Add Helm repository
+      run: helm repo add bitnami https://charts.bitnami.com/bitnami
+
+    - name: Install wordpress
+      run: helm install trustd bitnami/wordpress
+
+    - name: URL
+      run: |
+        export SERVICE_IP=$(kubectl get svc --namespace default trustd-wordpress --template "{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}")
+        echo "WordPress URL: http://$SERVICE_IP/"
+        echo "WordPress Admin URL: http://$SERVICE_IP/admin"
+
